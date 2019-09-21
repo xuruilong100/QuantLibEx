@@ -21,7 +21,7 @@ Real CubicSpline::operator()(Natural i, Real x) const {
             return 0.0;
         } else if (q_minus <= x and x < q) {
             return pow(x - q_minus, 3) / (6.0 * (q - q_minus));
-        } else if (q < x and x < q_plus) {
+        } else if (q <= x and x < q_plus) {
             return pow(q - q_minus, 2) / 6.0
                    + (q - q_minus) * (x - q) / 2.0
                    + pow(x - q, 2) / 2.0
