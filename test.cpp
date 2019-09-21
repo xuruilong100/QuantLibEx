@@ -1,9 +1,29 @@
+#include "CubicSpline.hpp"
+#include "CubicSplinesFitting.hpp"
 #include "test.hpp"
+#include <cmath>
 #include <iostream>
+#include <ql/quantlib.hpp>
 #include <vector>
 
-#include "CubicSplinesFitting.hpp"
-#include <ql/quantlib.hpp>
+QuantLib::Real CubicSplineSpotRate(const std::vector<QuantLib::Real>& knots,
+                                   const QuantLib::Array& weights,
+                                   const QuantLib::Time& t) {
+    using namespace std;
+    using namespace QuantLib;
+
+    CubicSpline spline(knots);
+    Size s = weights.size();
+    Real d = 1.0, r;
+
+    for (Size i = 0; i < s; ++i) {
+        d += weights[i] * spline(i + 1, t);
+    }
+
+    r = -std::log(d) / t;
+
+    return r;
+}
 
 void TestCubicSplineFitting() {
 
@@ -139,32 +159,41 @@ void TestCubicSplineFitting() {
     ext::shared_ptr<OptimizationMethod> optMethod(
         new LevenbergMarquardt());
 
-    vector<Real> knots = CubicSplinesFitting::autoKnots(maturity);
+    //vector<Real> knots = CubicSplinesFitting::autoKnots(maturity);
+    vector<Real> termstrcKnotes = {
+        0.000000, 1.006027, 2.380274, 5.033425, 9.234521, 31.446575};
 
     CubicSplinesFitting csf(
-        knots, Array(), optMethod);
+        termstrcKnotes, Array(), optMethod);
 
-    FittedBondDiscountCurve tsCubicBSplinesII(
+    FittedBondDiscountCurve tsCubicSplines(
         bondSettlementDate,
         instruments, dayCounter,
         csf, tolerance, max);
 
-    cout << tsCubicBSplinesII.fitResults().solution() << endl;
+    Array weights = tsCubicSplines.fitResults().solution();
+    Array termstrcWeights(7);
+    termstrcWeights[0] = 1.9320e-02, termstrcWeights[1] = -8.4936e-05, termstrcWeights[2] = -3.2009e-04,
+    termstrcWeights[3] = -3.7101e-04, termstrcWeights[4] = 7.2921e-04, termstrcWeights[5] = 2.0159e-03,
+    termstrcWeights[6] = -4.1632e-02;
 
-    vector<Real> cbsII(bondNum);
+    cout << "QuantLib: \t" << weights << endl;
+    cout << "termstrc: \t" << termstrcWeights << endl;
+
+    Real spotRate, termstrcSpot;
 
     for (Size i = 0; i < bondNum; ++i) {
 
-        cbsII[i] =
-            tsCubicBSplinesII
-                .zeroRate(
-                    maturityDate[i], dayCounter,
-                    Compounding::Continuous, frequency)
-                .rate()
-            * 100;
-        cout << dayCounter.yearFraction(
-                    bondSettlementDate, maturityDate[i])
-             << "," << cbsII[i]
-             << endl;
+        Time t = dayCounter.yearFraction(
+            bondSettlementDate, maturityDate[i]);
+
+        spotRate =
+            tsCubicSplines.zeroRate(t, Compounding::Continuous, frequency).rate() * 100;
+        termstrcSpot = CubicSplineSpotRate(termstrcKnotes, termstrcWeights, t) * 100.0;
+
+        cout << t << ","
+             << spotRate << ","
+             << termstrcSpot << ","
+             << spotRate - termstrcSpot << endl;
     }
 }
