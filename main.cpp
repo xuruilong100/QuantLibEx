@@ -1,7 +1,10 @@
+#include "test.hpp"
 #include <iostream>
 
 int main() {
     using namespace std;
-    cout << "Hello World" << endl;
+
+    TestCubicSplineFitting();
+
     return EXIT_SUCCESS;
 }
