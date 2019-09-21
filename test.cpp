@@ -159,12 +159,26 @@ void TestCubicSplineFitting() {
     ext::shared_ptr<OptimizationMethod> optMethod(
         new LevenbergMarquardt());
 
-    //vector<Real> knots = CubicSplinesFitting::autoKnots(maturity);
+    vector<Real> knots = CubicSplinesFitting::autoKnots(maturity);
     vector<Real> termstrcKnotes = {
         0.000000, 1.006027, 2.380274, 5.033425, 9.234521, 31.446575};
 
+    cout << "QuantLib knots:\t";
+    for (auto v : knots) {
+        cout << setprecision(6) << fixed << v << ", ";
+    }
+    cout << endl;
+
+    cout << "termstrc knots:\t";
+    for (auto v : termstrcKnotes) {
+        cout << setprecision(6) << fixed << v << ", ";
+    }
+    cout << endl;
+
+    cout << endl;
+
     CubicSplinesFitting csf(
-        termstrcKnotes, Array(), optMethod);
+        knots, Array(), optMethod);
 
     FittedBondDiscountCurve tsCubicSplines(
         bondSettlementDate,
@@ -173,12 +187,20 @@ void TestCubicSplineFitting() {
 
     Array weights = tsCubicSplines.fitResults().solution();
     Array termstrcWeights(7);
-    termstrcWeights[0] = 1.9320e-02, termstrcWeights[1] = -8.4936e-05, termstrcWeights[2] = -3.2009e-04,
-    termstrcWeights[3] = -3.7101e-04, termstrcWeights[4] = 7.2921e-04, termstrcWeights[5] = 2.0159e-03,
+    termstrcWeights[0] = 1.9320e-02, termstrcWeights[1] = -8.4936e-05,
+    termstrcWeights[2] = -3.2009e-04, termstrcWeights[3] = -3.7101e-04,
+    termstrcWeights[4] = 7.2921e-04, termstrcWeights[5] = 2.0159e-03,
     termstrcWeights[6] = -4.1632e-02;
 
-    cout << "QuantLib: \t" << weights << endl;
-    cout << "termstrc: \t" << termstrcWeights << endl;
+    cout << "QuantLib weights: \t" << weights << endl;
+    cout << "termstrc weights: \t" << termstrcWeights << endl;
+
+    cout << endl;
+
+    cout << "QuantLib final cost value:\t"
+         << tsCubicSplines.fitResults().minimumCostValue() << endl;
+
+    cout << endl;
 
     Real spotRate, termstrcSpot;
 
@@ -188,12 +210,14 @@ void TestCubicSplineFitting() {
             bondSettlementDate, maturityDate[i]);
 
         spotRate =
-            tsCubicSplines.zeroRate(t, Compounding::Continuous, frequency).rate() * 100;
-        termstrcSpot = CubicSplineSpotRate(termstrcKnotes, termstrcWeights, t) * 100.0;
+            tsCubicSplines.zeroRate(t, Compounding::Continuous, frequency).rate() * 100.0;
+        termstrcSpot =
+            CubicSplineSpotRate(termstrcKnotes, termstrcWeights, t) * 100.0;
 
-        cout << t << ","
-             << spotRate << ","
-             << termstrcSpot << ","
+        cout << setprecision(3) << fixed
+             << t << ",\t"
+             << spotRate << ",\t"
+             << termstrcSpot << ",\t"
              << spotRate - termstrcSpot << endl;
     }
 }
