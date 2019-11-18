@@ -13,8 +13,7 @@ AdjustedSvenssonFitting::AdjustedSvenssonFitting(const Array& weights,
     : FittedBondDiscountCurve::FittingMethod(
           true, weights, ext::shared_ptr<OptimizationMethod>(), l2) {}
 
-QL_UNIQUE_OR_AUTO_PTR<FittedBondDiscountCurve::FittingMethod>
-AdjustedSvenssonFitting::clone() const {
+QL_UNIQUE_OR_AUTO_PTR<FittedBondDiscountCurve::FittingMethod> AdjustedSvenssonFitting::clone() const {
     return QL_UNIQUE_OR_AUTO_PTR<FittedBondDiscountCurve::FittingMethod>(
         new AdjustedSvenssonFitting(*this));
 }
@@ -36,4 +35,5 @@ DiscountFactor AdjustedSvenssonFitting::discountFunction(const Array& x,
     DiscountFactor d = std::exp(-zeroRate * t);
     return d;
 }
+
 }    // namespace QuantLib

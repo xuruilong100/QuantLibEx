@@ -29,7 +29,7 @@ DiscountFactor BjorkChristensenFitting::discountFunction(const Array& x,
     Real zeroRate =
         x[0]
         + (x[1] + x[2]) * (1.0 - std::exp(-kappa * t)) / ((kappa + QL_EPSILON) * (t + QL_EPSILON))
-        - x[2] * std::exp(-kappa_1 * t)
+        - x[2] * std::exp(-kappa * t)
         + x[3] * (1.0 - std::exp(-kappa * t * 2.0)) / ((kappa + QL_EPSILON) * (t + QL_EPSILON) * 2.0);
 
     DiscountFactor d = std::exp(-zeroRate * t);

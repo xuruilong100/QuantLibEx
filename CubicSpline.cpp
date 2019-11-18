@@ -1,5 +1,6 @@
 #include "CubicSpline.hpp"
 #include <cmath>
+
 namespace QuantLib {
 
 CubicSpline::CubicSpline(const std::vector<Real>& knots)

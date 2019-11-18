@@ -1,5 +1,5 @@
-#ifndef CubicSplinesFitting_HPP
-#define CubicSplinesFitting_HPP
+#ifndef CUBICSPLINESFITTING_HPP
+#define CUBICSPLINESFITTING_HPP
 
 #include "CubicSpline.hpp"
 #include <ql/auto_ptr.hpp>
@@ -7,6 +7,19 @@
 
 namespace QuantLib {
 
+//! Cubic splines fitting method
+/*! Fits a discount function to a set of cubic splines
+    \f$ c_l(t) \f$, i.e.,
+    
+    \f[
+    d(t) = 1 + \sum_{l=1}^n \beta_l c_l(t)
+    \f]
+    
+    See: Ferstl R, Hayden J (2010). Zero-Coupon Yield Curve Estimation with
+    the Package termstrc. Journal of Statistical Software, Volume 36, Issue 1.
+    
+    McCulloch JH (1975). The Tax-Adjusted Yield Curve. The Journal of Finance, 30(3), 811–830.
+*/
 class CubicSplinesFitting
     : public FittedBondDiscountCurve::FittingMethod {
   public:
@@ -20,6 +33,8 @@ class CubicSplinesFitting
                         const Array& l2);
     //! cubic spline basis functions
     Real basisFunction(Integer i, Time t) const;
+
+    //! function that calculates knot points from maturities of bonds
     static std::vector<Time> autoKnots(const std::vector<Time>& maturities);
 #if defined(QL_USE_STD_UNIQUE_PTR)
     std::unique_ptr<FittedBondDiscountCurve::FittingMethod> clone() const;
@@ -31,10 +46,8 @@ class CubicSplinesFitting
     DiscountFactor discountFunction(const Array& x, Time t) const;
     CubicSpline splines_;
     Size size_;
-    //! N_th basis function coefficient to solve for when d(0)=1
-    Natural N_;
 };
 
 }    // namespace QuantLib
 
-#endif    // CubicSplinesFitting_HPP
+#endif    // CUBICSPLINESFITTING_HPP

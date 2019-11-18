@@ -1,11 +1,24 @@
 #ifndef ADJUSTEDSVENSSONFITTING_HPP
 #define ADJUSTEDSVENSSONFITTING_HPP
 
-#include <ql/shared_ptr.hpp>
+#include <ql/auto_ptr.hpp>
 #include <ql/termstructures/yield/fittedbonddiscountcurve.hpp>
 
 namespace QuantLib {
 
+//! Adjusted Svensson Fitting method
+/*! Fits a discount function to the form
+    \f$ d(t) = \exp^{-r t}, \f$ where the zero rate \f$r\f$ is defined as
+    
+    \f[
+    r \equiv c_0 + (c_1 + c_2)(\frac {1 - exp^{-\kappa t}}{\kappa t})
+    - c_2exp^{ - \kappa t}
+    + c_3{(\frac{1 - exp^{-\kappa_1 t}}{\kappa_1 t} -exp^{-2\kappa_1 t})}.
+    \f]
+    
+    See: Ferstl R, Hayden J (2010). Zero-Coupon Yield Curve Estimation with
+    the Package termstrc. Journal of Statistical Software, Volume 36, Issue 1.
+*/
 class AdjustedSvenssonFitting : public FittedBondDiscountCurve::FittingMethod {
   public:
     AdjustedSvenssonFitting(const Array& weights = Array(),

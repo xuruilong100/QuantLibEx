@@ -14,7 +14,6 @@ CubicSplinesFitting::CubicSplinesFitting(const std::vector<Time>& knots,
     Size basisFunctions = knots.size() + 1;
 
     size_ = basisFunctions;
-    N_ = 0;
 }
 
 CubicSplinesFitting::CubicSplinesFitting(const std::vector<Time>& knots,
@@ -27,7 +26,6 @@ CubicSplinesFitting::CubicSplinesFitting(const std::vector<Time>& knots,
     Size basisFunctions = knots.size() + 1;
 
     size_ = basisFunctions;
-    N_ = 0;
 }
 
 Real CubicSplinesFitting::basisFunction(Integer i,
