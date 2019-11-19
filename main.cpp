@@ -4,7 +4,8 @@
 int main() {
     using namespace std;
 
-    TestCubicSplineFitting();
+    //TestCubicSplineFitting();
+    TestParametricTermStructure();
 
     return EXIT_SUCCESS;
 }

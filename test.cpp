@@ -1,5 +1,9 @@
+#include "AdjustedSvenssonFitting.hpp"
+#include "BjorkChristensenFitting.hpp"
+#include "BlissFitting.hpp"
 #include "CubicSpline.hpp"
 #include "CubicSplinesFitting.hpp"
+#include "DieboldLiFitting.hpp"
 #include "test.hpp"
 #include <cmath>
 #include <iostream>
@@ -219,5 +223,253 @@ void TestCubicSplineFitting() {
              << spotRate << ",\t"
              << termstrcSpot << ",\t"
              << spotRate - termstrcSpot << endl;
+    }
+}
+
+void TestNelsonSiegelClassTermStructure() {
+
+    using namespace std;
+    using namespace QuantLib;
+
+    Size bondNum = 16;
+
+    vector<Real> cleanPrice = {
+        100.4941, 103.5572, 104.4135, 105.0056, 99.8335, 101.25, 102.3832, 97.0053,
+        99.5164, 101.2435, 104.0539, 101.15, 96.1395, 91.1123, 122.0027, 92.4369};
+
+    vector<Handle<Quote>> priceHandle(bondNum);
+
+    for (Size i = 0; i < bondNum; ++i) {
+        ext::shared_ptr<Quote> q(
+            new SimpleQuote(cleanPrice[i]));
+        Handle<Quote> hq(q);
+        priceHandle[i] = hq;
+    }
+
+    vector<Year> issueYear = {
+        1999, 1999, 2001, 2002, 2003, 1999, 2004, 2005,
+        2006, 2007, 2003, 2008, 2005, 2006, 1997, 2007};
+
+    vector<Month> issueMonth = {
+        Feb, Oct, Jan, Jan, May, Jan, Jan, Apr,
+        Apr, Sep, Jan, Jan, Jan, Jan, Jul, Jan};
+
+    vector<Day> issueDay = {
+        22, 22, 4, 9, 20, 15, 15, 26, 21, 17, 15, 8, 14, 11, 10, 12};
+
+    vector<Year> maturityYear = {
+        2009, 2010, 2011, 2012, 2013, 2014, 2014, 2015,
+        2016, 2017, 2018, 2019, 2020, 2021, 2027, 2037};
+
+    vector<Month> maturityMonth = {
+        Jul, Jan, Jan, Jul, Oct, Jan, Jul, Jul,
+        Sep, Sep, Jan, Mar, Jul, Sep, Jul, Mar};
+
+    vector<Day> maturityDay = {
+        15, 15, 4, 15, 20, 15, 15, 15,
+        15, 15, 15, 15, 15, 15, 15, 15};
+
+    vector<Date> issueDate(bondNum), maturityDate(bondNum);
+
+    for (Size i = 0; i < bondNum; ++i) {
+        Date idate(issueDay[i], issueMonth[i], issueYear[i]);
+        Date mdate(maturityDay[i], maturityMonth[i], maturityYear[i]);
+        issueDate[i] = idate;
+        maturityDate[i] = mdate;
+    }
+
+    vector<Real> couponRate = {
+        0.04, 0.055, 0.0525, 0.05, 0.038, 0.04125, 0.043, 0.035,
+        0.04, 0.043, 0.0465, 0.0435, 0.039, 0.035, 0.0625, 0.0415};
+
+    Frequency frequency = Annual;
+    Actual365Fixed dayCounter(Actual365Fixed::Standard);
+    BusinessDayConvention paymentConv = Unadjusted;
+    BusinessDayConvention terminationDateConv = Unadjusted;
+    BusinessDayConvention convention = Unadjusted;
+    Real redemption = 100.0;
+    Real faceAmount = 100.0;
+    Australia calendar;
+
+    Date today = calendar.adjust(Date(30, Jan, 2008));
+    Settings::instance().evaluationDate() = today;
+
+    Natural bondSettlementDays = 0;
+    Date bondSettlementDate = calendar.advance(
+        today,
+        Period(bondSettlementDays, Days));
+
+    vector<ext::shared_ptr<BondHelper>> instruments(bondNum);
+    vector<Time> maturity(bondNum);
+
+    for (Size i = 0; i < bondNum; ++i) {
+
+        vector<Real> bondCoupon = {couponRate[i]};
+
+        Schedule schedule(
+            issueDate[i],
+            maturityDate[i],
+            Period(frequency),
+            calendar,
+            convention,
+            terminationDateConv,
+            DateGeneration::Backward,
+            false);
+
+        ext::shared_ptr<FixedRateBondHelper> helper(
+            new FixedRateBondHelper(
+                priceHandle[i],
+                bondSettlementDays,
+                faceAmount,
+                schedule,
+                bondCoupon,
+                dayCounter,
+                paymentConv,
+                redemption));
+
+        maturity[i] = dayCounter.yearFraction(
+            bondSettlementDate, helper->maturityDate());
+
+        instruments[i] = helper;
+    }
+
+    Real accuracy = 1.0e-6;
+    Natural maxEvaluations = 5000;
+    Array weights;
+
+    Array l2Ns(4, 0.5);
+    Array guessNs(4);
+    guessNs[0] = 4 / 100.0, guessNs[1] = 0.0, guessNs[2] = 0.0, guessNs[3] = 0.5;
+
+    Array l2Sv(6, 0.5);
+    Array guessSv(6);
+    guessSv[0] = 4 / 100.0, guessSv[1] = 0.0, guessSv[2] = 0.0, guessSv[3] = 0.0, guessSv[4] = 0.2, guessSv[5] = 0.15;
+
+    Array l2Asv(6, 0.5);
+    Array guessAsv(6);
+    guessAsv[0] = 4 / 100.0, guessAsv[1] = 0.0, guessAsv[2] = 0.0, guessAsv[3] = 0.0, guessAsv[4] = 0.2, guessAsv[5] = 0.3;
+
+    Array l2Bc(5, 0.5);
+    Array guessBc(5);
+    guessBc[0] = 4 / 100.0, guessBc[1] = 0.0, guessBc[2] = 0.0, guessBc[3] = 0.0, guessBc[4] = 0.2;
+
+    Array l2Bl(5, 0.5);
+    Array guessBl(5);
+    guessBl[0] = 4 / 100.0, guessBl[1] = 0.0, guessBl[2] = 0.0, guessBl[3] = 0.5, guessBl[4] = 0.5;
+
+    ext::shared_ptr<OptimizationMethod> optMethod(
+        new LevenbergMarquardt());
+
+    NelsonSiegelFitting nsf(
+        weights, optMethod, l2Ns);
+
+    SvenssonFitting svf(
+        weights, optMethod, l2Sv);
+
+    AdjustedSvenssonFitting asvf(
+        weights, optMethod, l2Asv);
+
+    DieboldLiFitting dlf(
+        0.5, weights, optMethod);
+
+    BjorkChristensenFitting bcf(
+        weights, optMethod, l2Bc);
+
+    BlissFitting blf(
+        weights, optMethod, l2Bl);
+
+    FittedBondDiscountCurve tsNelsonSiegel(
+        bondSettlementDate,
+        instruments,
+        dayCounter,
+        nsf,
+        accuracy,
+        maxEvaluations,
+        guessNs);
+
+    FittedBondDiscountCurve tsSvensson(
+        bondSettlementDate,
+        instruments,
+        dayCounter,
+        svf,
+        accuracy,
+        maxEvaluations,
+        guessSv);
+
+    FittedBondDiscountCurve tsAdjustedSvensson(
+        bondSettlementDate,
+        instruments,
+        dayCounter,
+        asvf,
+        accuracy,
+        maxEvaluations,
+        guessAsv);
+
+    FittedBondDiscountCurve tsDieboldLi(
+        bondSettlementDate,
+        instruments,
+        dayCounter,
+        dlf,
+        accuracy,
+        maxEvaluations);
+
+    FittedBondDiscountCurve tsBjorkChristensen(
+        bondSettlementDate,
+        instruments,
+        dayCounter,
+        bcf,
+        accuracy,
+        maxEvaluations,
+        guessBc);
+
+    FittedBondDiscountCurve tsBliss(
+        bondSettlementDate,
+        instruments,
+        dayCounter,
+        blf,
+        accuracy,
+        maxEvaluations,
+        guessBl);
+
+    cout << "NelsonSiegel Results: \t\t" << tsNelsonSiegel.fitResults().solution() << endl;
+    cout << "Svensson Results: \t\t" << tsSvensson.fitResults().solution() << endl;
+    cout << "AdjustedSvensson Results: \t" << tsAdjustedSvensson.fitResults().solution() << endl;
+    cout << "DieboldLi Results: \t\t" << tsDieboldLi.fitResults().solution() << endl;
+    cout << "BjorkChristensen Results: \t" << tsBjorkChristensen.fitResults().solution() << endl;
+    cout << "Bliss Results: \t\t\t" << tsBliss.fitResults().solution() << endl;
+
+    cout << endl;
+    /*
+    cout << "QuantLib final cost value:\t" << tsNelsonSiegel.fitResults().minimumCostValue() << endl;
+    cout << "QuantLib final cost value:\t" << tsSvensson.fitResults().minimumCostValue() << endl;
+    cout << "QuantLib final cost value:\t" << tsAdjustedSvensson.fitResults().minimumCostValue() << endl;
+    cout << "QuantLib final cost value:\t" << tsDieboldLi.fitResults().minimumCostValue() << endl;
+    cout << "QuantLib final cost value:\t" << tsBjorkChristensen.fitResults().minimumCostValue() << endl;
+    cout << "QuantLib final cost value:\t" << tsBliss.fitResults().minimumCostValue() << endl;
+
+    cout << endl;
+    */
+    Real NSrate, SVrate, ASVrate, DLrate, BCrate, Brate;
+
+    for (Size i = 0; i < bondNum; ++i) {
+
+        Time t = dayCounter.yearFraction(
+            bondSettlementDate, maturityDate[i]);
+
+        NSrate = tsNelsonSiegel.zeroRate(t, Compounding::Continuous, frequency).rate() * 100.0;
+        SVrate = tsSvensson.zeroRate(t, Compounding::Continuous, frequency).rate() * 100.0;
+        ASVrate = tsAdjustedSvensson.zeroRate(t, Compounding::Continuous, frequency).rate() * 100.0;
+        DLrate = tsDieboldLi.zeroRate(t, Compounding::Continuous, frequency).rate() * 100.0;
+        BCrate = tsBjorkChristensen.zeroRate(t, Compounding::Continuous, frequency).rate() * 100.0;
+        Brate = tsBliss.zeroRate(t, Compounding::Continuous, frequency).rate() * 100.0;
+
+        cout << setprecision(3) << fixed
+             << t << ",\t"
+             << NSrate << ",\t"
+             << SVrate << ",\t"
+             << ASVrate << ",\t"
+             << DLrate << ",\t"
+             << BCrate << ",\t"
+             << Brate << endl;
     }
 }
