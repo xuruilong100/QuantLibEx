@@ -23,7 +23,7 @@ namespace QuantLib {
     \left\{\begin{array}{ll}
     0 & {t<k_{l-1}} \\
     {\frac{\left(t-k_{l-1}\right)^{3}}{6\left(k_{l}-k_{l-1}\right)}} & {k_{l-1} \leq t<k_{l}} \\
-    {\frac{\left(k_{l}-k_{l-1}\right)^{2}}{6}+\frac{\left(k_{l}-k_{l-1}\right)\left(t-k_{l}\right)}{6}+\frac{\left(t-k_{l}\right)^{2}}{6\left(k_{l+1}-k_{l}\right)}} & {k_{l} \leq t<k_{l+1}} \\
+    {\frac{\left(k_{l}-k_{l-1}\right)^{2}}{6}+\frac{\left(k_{l}-k_{l-1}\right)\left(t-k_{l}\right)}{2}+\frac{(t-k_l)^2}{2} -\frac{\left(t-k_{l}\right)^{3}}{6\left(k_{l+1}-k_{l}\right)}} & {k_{l} \leq t<k_{l+1}} \\
     {\left(k_{l+1}-k_{l-1}\right)\left[\frac{2 k_{l+1}-k_{l}-k_{l-1}}{6}+\frac{t-k_{l+1}}{2}\right]} & {k_{l+1} \leq t}
     \end{array}\right.
     \end{cases}
