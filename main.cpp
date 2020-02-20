@@ -5,7 +5,9 @@ int main() {
     using namespace std;
 
     //TestCubicSplineFitting();
-    TestParametricTermStructure();
+    //TestParametricTermStructure();
+    //TestNelsonSiegelClassTermStructure();
+    CampareCubicAndQuadratic();
 
     return EXIT_SUCCESS;
 }

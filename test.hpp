@@ -8,6 +8,7 @@
 
 void TestCubicSplineFitting();
 void TestNelsonSiegelClassTermStructure();
+void CampareCubicAndQuadratic();
 
 QuantLib::Real CubicSplineSpotRate(const std::vector<QuantLib::Real>& knots,
                                    const QuantLib::Array& weights,
