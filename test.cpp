@@ -476,7 +476,7 @@ void TestNelsonSiegelClassTermStructure() {
     }
 }
 
-void CampareCubicAndQuadratic() {
+void CompareCubicAndQuadratic() {
 
     using namespace std;
     using namespace QuantLib;
