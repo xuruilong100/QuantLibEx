@@ -3,27 +3,27 @@
 
 namespace QuantLib {
 
-CubicSplinesFitting::CubicSplinesFitting(const std::vector<Time>& knots,
+CubicSplinesFitting::CubicSplinesFitting(const std::vector<Time>& knotVector,
                                          const Array& weights,
                                          ext::shared_ptr<OptimizationMethod> optimizationMethod,
                                          const Array& l2)
     : FittedBondDiscountCurve::FittingMethod(
           false, weights, optimizationMethod, l2),
-      splines_(knots) {
+      splines_(knotVector) {
 
-    Size basisFunctions = knots.size() + 1;
+    Size basisFunctions = knotVector.size() + 1;
 
     size_ = basisFunctions;
 }
 
-CubicSplinesFitting::CubicSplinesFitting(const std::vector<Time>& knots,
+CubicSplinesFitting::CubicSplinesFitting(const std::vector<Time>& knotVector,
                                          const Array& weights,
                                          const Array& l2)
     : FittedBondDiscountCurve::FittingMethod(
           false, weights, ext::shared_ptr<OptimizationMethod>(), l2),
-      splines_(knots) {
+      splines_(knotVector) {
 
-    Size basisFunctions = knots.size() + 1;
+    Size basisFunctions = knotVector.size() + 1;
 
     size_ = basisFunctions;
 }
