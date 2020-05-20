@@ -1,3 +1,4 @@
+#include "Actual365_25.hpp"
 #include "AdjustedSvenssonFitting.hpp"
 #include "BjorkChristensenFitting.hpp"
 #include "BlissFitting.hpp"
@@ -692,4 +693,36 @@ void CompareCubicAndQuadratic() {
              << spotRateCubic - termstrcSpot << ",\t"
              << spotRateQuadratic - termstrcSpot << endl;
     }
+}
+
+void TestActual365_25() {
+    using namespace std;
+    using namespace QuantLib;
+
+    Actual365_25 act365_25;
+    Actual365Fixed act365;
+
+    Date d1(28, December, 2007),
+        d2(28, February, 2008),
+        d3(29, February, 2008),
+        d4(31, October, 2007),
+        d5(30, November, 2008),
+        d6(2, January, 2008),
+        d7(1, May, 2009);
+
+    cout << act365.yearFraction(d1, d2) << ", "
+         << act365_25.yearFraction(d1, d2) << ", "
+         << act365_25.yearFraction(d1, d2) * 365.25 / 365.0 << endl;
+
+    cout << act365.yearFraction(d1, d3) << ", "
+         << act365_25.yearFraction(d1, d3) << ", "
+         << act365_25.yearFraction(d1, d3) * 365.25 / 365.0 << endl;
+
+    cout << act365.yearFraction(d4, d5) << ", "
+         << act365_25.yearFraction(d4, d5) << ", "
+         << act365_25.yearFraction(d4, d5) * 365.25 / 365.0 << endl;
+
+    cout << act365.yearFraction(d6, d7) << ", "
+         << act365_25.yearFraction(d6, d7) << ", "
+         << act365_25.yearFraction(d6, d7) * 365.25 / 365.0 << endl;
 }

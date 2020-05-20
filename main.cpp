@@ -7,7 +7,8 @@ int main() {
     //TestCubicSplineFitting();
     //TestParametricTermStructure();
     //TestNelsonSiegelClassTermStructure();
-    CampareCubicAndQuadratic();
+    //CampareCubicAndQuadratic();
+    TestActual365_25();
 
     return EXIT_SUCCESS;
 }
