@@ -18,6 +18,10 @@ Class `BlissFitting` intends to fit term structure using **Bliss three-factor mo
 
 Class `BjorkChristensenFitting` intends to fit term structure using **Björk-Christensen four-factor model**, the codes base on paper and (Pooter, 2007).
 
+## About Day Counter
+
+Class `Actual365_25` is Actual/365.25 day count convention. Just a copy of `Actual365Fixed`, but divied by 356.25.
+
 ## Reference
 
 * Ferstl.R, Hayden.J (2010). "Zero-Coupon Yield Curve Estimation with the Package `termstrc`." *Journal of Statistical Software*, Volume 36, Issue 1.

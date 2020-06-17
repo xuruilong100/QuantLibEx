@@ -2,7 +2,6 @@
 #define ACTUAL365_25_HPP
 
 #include <ql/time/daycounter.hpp>
-#include <ql/time/daycounters/actual365fixed.hpp>
 
 namespace QuantLib {
 
