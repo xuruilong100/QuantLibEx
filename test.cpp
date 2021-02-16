@@ -2,6 +2,9 @@
 #include "AdjustedSvenssonFitting.hpp"
 #include "BjorkChristensenFitting.hpp"
 #include "BlissFitting.hpp"
+#include "ChinaFixingRepo.hpp"
+#include "ChinaFixingRepoCoupon.hpp"
+#include "ChinaFixingRepoSwap.hpp"
 #include "CubicSpline.hpp"
 #include "CubicSplinesFitting.hpp"
 #include "DieboldLiFitting.hpp"
@@ -725,4 +728,174 @@ void TestActual365_25() {
     cout << act365.yearFraction(d6, d7) << ", "
          << act365_25.yearFraction(d6, d7) << ", "
          << act365_25.yearFraction(d6, d7) * 365.25 / 365.0 << endl;
+}
+
+void TestChinaFixingRepoCoupon() {
+    using namespace std;
+    using namespace QuantLib;
+
+    Calendar calendar = China(China::IB);
+    Date today(21, January, 2020);
+    Settings::instance().evaluationDate() = today;
+
+    Natural fixingDays = 1;
+
+    DayCounter dayCounter = Actual365Fixed(Actual365Fixed::Standard);
+
+    ext::shared_ptr<ChinaFixingRepo> fr(
+        new ChinaFixingRepo(
+            Period(7, Days),
+            fixingDays));
+
+    vector<Date> dates = {
+        Date(27, July, 2018),
+        Date(3, August, 2018),
+        Date(10, August, 2018),
+        Date(17, August, 2018),
+        Date(24, August, 2018),
+        Date(31, August, 2018),
+        Date(7, September, 2018),
+        Date(14, September, 2018),
+        Date(21, September, 2018),
+        Date(30, September, 2018),
+        Date(12, October, 2018),
+        Date(19, October, 2018),
+        Date(26, October, 2018)};
+
+    vector<Rate> fwds = {
+        2.8 / 100.0,
+        2.4 / 100.0,
+        2.29 / 100.0,
+        2.65 / 100.0,
+        2.5 / 100.0,
+        2.66 / 100.0,
+        2.69 / 100.0,
+        2.6 / 100.0,
+        2.65 / 100.0,
+        2.76 / 100.0,
+        2.6 / 100.0,
+        2.61 / 100.0,
+        2.65 / 100.0};
+
+    TimeSeries<Real> ts(dates.begin(), dates.end(), fwds.begin());
+
+    IndexManager::instance().setHistory(fr->name(), ts);
+
+    Date startDate(30, July, 2018);
+    Date endDate(30, October, 2018);
+
+    ChinaFixingRepoCoupon coupon(
+        endDate,
+        10000.0,
+        startDate,
+        endDate,
+        fr,
+        1.0,
+        0.0,
+        startDate,
+        endDate,
+        dayCounter);
+
+    cout << coupon.rate() << endl;
+
+    size_t n = coupon.fixingDates().size();
+
+    for (size_t i = 0; i < n; ++i) {
+        cout << setw(15) << coupon.fixingDates()[i]
+             << setw(15) << coupon.valueDates()[i] << endl;
+    }
+}
+
+void TestChinaFixingRepoSwap() {
+    using namespace std;
+    using namespace QuantLib;
+
+    Calendar calendar = China(China::IB);
+    Date today(21, January, 2020);
+    Settings::instance().evaluationDate() = today;
+
+    Natural fixingDays = 1;
+
+    DayCounter dayCounter = Actual365Fixed(Actual365Fixed::Standard);
+
+    ext::shared_ptr<YieldTermStructure> flat(
+        new FlatForward(today, 0.03, dayCounter));
+    Handle<YieldTermStructure> flatHandle(flat);
+
+    ext::shared_ptr<ChinaFixingRepo> fr(
+        new ChinaFixingRepo(
+            Period(7, Days),
+            fixingDays));
+
+    Date effectiveDate(22, January, 2020), terminationDate(22, January, 2030);
+
+    Schedule sch(
+        effectiveDate,
+        terminationDate,
+        Period(3, Months),
+        calendar,
+        ModifiedFollowing,
+        Unadjusted,
+        DateGeneration::Forward,
+        false);
+
+    vector<Date> zrDates = {
+        Date(22, January, 2020),
+        Date(22, January, 2020) + Period(8, Days),
+        Date(22, January, 2020) + Period(36, Days),
+        Date(22, January, 2020) + Period(92, Days),
+        Date(22, January, 2020) + Period(183, Days),
+        Date(22, January, 2020) + Period(281, Days),
+        Date(22, January, 2020) + Period(373, Days),
+        Date(22, January, 2020) + Period(738, Days),
+        Date(22, January, 2020) + Period(1105, Days),
+        Date(22, January, 2020) + Period(1462, Days),
+        Date(22, January, 2020) + Period(1834, Days),
+        Date(22, January, 2020) + Period(2564, Days),
+        Date(22, January, 2020) + Period(3660, Days)};
+
+    vector<Real> zrs = {
+        0.00000,
+        2.59113 / 100.0,
+        2.58362 / 100.0,
+        2.56513 / 100.0,
+        2.57243 / 100.0,
+        2.58659 / 100.0,
+        2.59732 / 100.0,
+        2.66064 / 100.0,
+        2.73611 / 100.0,
+        2.82605 / 100.0,
+        2.91498 / 100.0,
+        3.05578 / 100.0,
+        3.19530 / 100.0};
+
+    ext::shared_ptr<YieldTermStructure> zc(
+        new InterpolatedZeroCurve<Linear>(
+            zrDates, zrs, dayCounter, calendar,
+            Linear(), Continuous));
+
+    Handle<YieldTermStructure> zcHandle(zc);
+
+    ext::shared_ptr<PricingEngine> engine(
+        new DiscountingSwapEngine(zcHandle));
+
+    ext::shared_ptr<ChinaFixingRepo> idx(
+        new ChinaFixingRepo(
+            Period(7, Days),
+            fixingDays,
+            zcHandle));
+
+    ChinaFixingRepoSwap swap(
+        ChinaFixingRepoSwap::Type::Payer,
+        10000000.0,
+        sch,
+        3.1763 / 100.0,
+        dayCounter,
+        idx);
+
+    swap.setPricingEngine(engine);
+
+    cout << swap.NPV() / 10000000.0 * 100.0 << '%' << endl;
+    cout << swap.fixedLegNPV() / 10000000.0 * 100.0 << '%' << endl;
+    cout << swap.floatingLegNPV() / 10000000.0 * 100.0 << '%' << endl;
 }

@@ -15,4 +15,7 @@ QuantLib::Real CubicSplineSpotRate(const std::vector<QuantLib::Real>& knots,
                                    const QuantLib::Array& weights,
                                    const QuantLib::Time& t);
 
+void TestChinaFixingRepoCoupon();
+void TestChinaFixingRepoSwap();
+
 #endif
