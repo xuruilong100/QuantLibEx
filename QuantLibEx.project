@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Project Name="QuantLibEx" Version="11000" InternalType="Console">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00010001N0005Debug000000000000]]>
+    </Plugin>
+  </Plugins>
+  <VirtualDirectory Name="main">
+    <File Name="main.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="test">
+    <File Name="test/utility.cpp"/>
+    <File Name="test/utility.hpp"/>
+    <File Name="test/test.cpp"/>
+    <File Name="test/test.hpp"/>
+    <File Name="test/example.cpp"/>
+    <File Name="test/example.hpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="qlex">
+    <File Name="qlex/quantlibex.hpp"/>
+    <VirtualDirectory Name="indexes">
+      <File Name="qlex/indexes/all.hpp"/>
+      <File Name="qlex/indexes/ChinaFixingRepo.hpp"/>
+      <File Name="qlex/indexes/ChinaFixingRepo.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="termstructures">
+      <File Name="qlex/termstructures/all.hpp"/>
+      <VirtualDirectory Name="yield">
+        <File Name="qlex/termstructures/yield/all.hpp"/>
+        <File Name="qlex/termstructures/yield/BjorkChristensenFitting.hpp"/>
+        <File Name="qlex/termstructures/yield/ChinaFixingRepoSwapRateHelper.cpp"/>
+        <File Name="qlex/termstructures/yield/QuadraticSplinesFitting.cpp"/>
+        <File Name="qlex/termstructures/yield/CubicSplinesFitting.hpp"/>
+        <File Name="qlex/termstructures/yield/ChinaFixingRepoSwapRateHelper.hpp"/>
+        <File Name="qlex/termstructures/yield/BlissFitting.cpp"/>
+        <File Name="qlex/termstructures/yield/DieboldLiFitting.hpp"/>
+        <File Name="qlex/termstructures/yield/BjorkChristensenFitting.cpp"/>
+        <File Name="qlex/termstructures/yield/QuadraticSplinesFitting.hpp"/>
+        <File Name="qlex/termstructures/yield/CubicSplinesFitting.cpp"/>
+        <File Name="qlex/termstructures/yield/AdjustedSvenssonFitting.hpp"/>
+        <File Name="qlex/termstructures/yield/AdjustedSvenssonFitting.cpp"/>
+        <File Name="qlex/termstructures/yield/BlissFitting.hpp"/>
+        <File Name="qlex/termstructures/yield/DieboldLiFitting.cpp"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="time">
+      <File Name="qlex/time/all.hpp"/>
+      <VirtualDirectory Name="daycounters">
+        <File Name="qlex/time/daycounters/all.hpp"/>
+        <File Name="qlex/time/daycounters/Actual365_25.cpp"/>
+        <File Name="qlex/time/daycounters/Actual365_25.hpp"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="math">
+      <File Name="qlex/math/all.hpp"/>
+      <File Name="qlex/math/CubicSpline.cpp"/>
+      <File Name="qlex/math/QuadraticSpline.cpp"/>
+      <File Name="qlex/math/CubicSpline.hpp"/>
+      <File Name="qlex/math/QuadraticSpline.hpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="instruments">
+      <File Name="qlex/instruments/all.hpp"/>
+      <File Name="qlex/instruments/MakeChinaFixingRepoSwap.cpp"/>
+      <File Name="qlex/instruments/ChinaFixingRepoSwap.cpp"/>
+      <File Name="qlex/instruments/ChinaFixingRepoSwap.hpp"/>
+      <File Name="qlex/instruments/MakeChinaFixingRepoSwap.hpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="cashflows">
+      <File Name="qlex/cashflows/all.hpp"/>
+      <File Name="qlex/cashflows/ChinaFixingRepoCoupon.hpp"/>
+      <File Name="qlex/cashflows/ChinaFixingRepoCoupon.cpp"/>
+      <File Name="qlex/cashflows/ChinaFixingRepoLeg.cpp"/>
+      <File Name="qlex/cashflows/ChinaFixingRepoCouponPricer.hpp"/>
+      <File Name="qlex/cashflows/ChinaFixingRepoLeg.hpp"/>
+      <File Name="qlex/cashflows/ChinaFixingRepoCouponPricer.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <Description/>
+  <Dependencies/>
+  <Settings Type="Executable">
+    <GlobalSettings>
+      <Compiler Options="" C_Options="" Assembler="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="Debug" CompilerType="clang( tags/RELEASE_600/final )" DebuggerType="LLDB Debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;-O0;-Wall;$(shell wx-config --cxxflags)  " C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="./"/>
+      </Compiler>
+      <Linker Options="$(shell wx-config --libs) " Required="yes">
+        <LibraryPath Value="/usr/lib/"/>
+        <Library Value="QuantLib"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="$(ConfigurationName)" Command="$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="clang( tags/RELEASE_600/final )" DebuggerType="LLDB Debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-O2;-Wall;$(shell wx-config --cxxflags)" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+        <Preprocessor Value="NDEBUG"/>
+      </Compiler>
+      <Linker Options="$(shell wx-config --libs)" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="$(ConfigurationName)" Command="$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+  </Settings>
+</CodeLite_Project>

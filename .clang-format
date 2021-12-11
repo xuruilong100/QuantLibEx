@@ -1,0 +1,14 @@
+# QuantLib Style
+UseTab: Never
+IndentWidth: 4
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass: false
+  AfterFunction: false
+ColumnLimit: 0
+ContinuationIndentWidth: 4
+AllowAllParametersOfDeclarationOnNextLine: true
+SpacesBeforeTrailingComments: 4
+AlignTrailingComments: true
+PointerAlignment: Left
+BreakBeforeBinaryOperators: NonAssignment

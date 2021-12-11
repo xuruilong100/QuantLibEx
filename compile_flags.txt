@@ -1,0 +1,8 @@
+-I/usr/include/c++/9
+-I/usr/include/x86_64-linux-gnu/c++/9
+-I/usr/include/c++/9/backward
+-I/usr/local/include
+-I/usr/lib/llvm-10/lib/clang/10.0.0/include
+-I/usr/include/x86_64-linux-gnu
+-I/usr/include
+-I/home/xrl/Documents/CodeLite/QuantLibEx
