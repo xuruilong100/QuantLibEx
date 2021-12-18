@@ -13,8 +13,6 @@ class ChinaFixingRepo;
 
 class ChinaFixingRepoSwap : public Swap {
   public:
-    enum Type { Receiver = -1,
-                Payer = 1 };
     ChinaFixingRepoSwap(Type type,
                         Real nominal,
                         const Schedule& schedule,
